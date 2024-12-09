@@ -90,7 +90,7 @@ fn calc_antinodes(
     nodes
 }
 
-pub fn part_one(input: &str) -> Option<u32> {
+fn solve(input: &str, resonance: bool) -> u32 {
     let grid = parse(input);
     let frequencies = grid.map.values().unique().collect_vec();
     let mut antinodes = HashSet::new();
@@ -102,34 +102,22 @@ pub fn part_one(input: &str) -> Option<u32> {
             .filter_map(|(coord, ch)| ch.eq(freq).then_some(coord))
             .combinations(2)
         {
-            calc_antinodes(pair[0], pair[1], &grid, false)
+            calc_antinodes(pair[0], pair[1], &grid, resonance)
                 .iter()
                 .for_each(|n| {
                     antinodes.insert(n.clone());
                 });
         }
     }
-    Some(antinodes.len() as u32)
+    antinodes.len() as u32
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    let count = solve(input, false);
+    Some(count)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let grid = parse(input);
-    let frequencies = grid.map.values().unique().collect_vec();
-    let mut antinodes = HashSet::new();
-
-    for freq in frequencies {
-        for pair in grid
-            .map
-            .iter()
-            .filter_map(|(coord, ch)| ch.eq(freq).then_some(coord))
-            .combinations(2)
-        {
-            calc_antinodes(pair[0], pair[1], &grid, true)
-                .iter()
-                .for_each(|n| {
-                    antinodes.insert(n.clone());
-                });
-        }
-    }
-    Some(antinodes.len() as u32)
+    let count = solve(input, true);
+    Some(count)
 }
